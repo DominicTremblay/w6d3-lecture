@@ -45,7 +45,7 @@ wss.on('connection', ws => {
   addClient(ws);
 
   ws.on('message', message => {
-    wss.broadcast(message);
+    const receivedMsg = JSON.parse(message);
   });
 });
 
