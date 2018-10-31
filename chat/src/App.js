@@ -6,7 +6,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: { name: 'Anonymous' },
+      currentUser: { name: 'Bob' },
       messages: []
     };
 
@@ -22,10 +22,28 @@ class App extends Component {
         })
       );
     };
+
+    this.socketServer.onmessage = message => {
+      const incomingMessage = JSON.parse(message.data);
+
+      switch (incomingMessage.type) {
+        case 'incomingUserNotification':
+          this.updateUserInfo(incomingMessage.userId, incomingMessage.color);
+          break;
+        default:
+          console.log('Unkown Message Type');
+      }
+    };
   }
 
+  updateUserInfo = (userId, color = 'black') => {
+    this.setState({
+      currentUser: { id: userId, name: this.state.currentUser.name, color }
+    });
+  };
+
   render() {
-    return <div className="App">Chat</div>;
+    return <div className="App">Super Awesome Chat</div>;
   }
 }
 
