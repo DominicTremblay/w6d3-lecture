@@ -33,6 +33,18 @@ const updateClient = (username, ws) => {
   console.log(clients[ws.clientId]);
 };
 
+const sendClientColor = ws => {
+  const { color } = clients[ws.clientId];
+
+  const message = {
+    type: 'incomingUserNotification',
+    userId: ws.clientId,
+    color
+  };
+
+  ws.send(JSON.stringify(message));
+};
+
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === SocketServer.OPEN) {
@@ -54,6 +66,7 @@ wss.on('connection', ws => {
     switch (receivedMsg.type) {
       case 'postUsername':
         updateClient(receivedMsg.username, ws);
+        sendClientColor(ws);
         break;
       default:
         console.log('Unkown message type');
