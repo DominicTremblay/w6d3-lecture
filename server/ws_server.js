@@ -28,10 +28,21 @@ const addClient = (ws, username = 'Anonymous') => {
   clients[clientId] = { ws, username, color: generateColor() };
 };
 
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === SocketServer.OPEN) {
+      client.send(data);
+    }
+  });
+};
+
 wss.on('connection', ws => {
   console.log('Client connected');
   addClient(ws);
-  console.log(clients[ws.clientId]);
+
+  ws.on('message', message => {
+    wss.broadcast(message);
+  });
 });
 
 wss.on('close', () => {
