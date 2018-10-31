@@ -28,6 +28,11 @@ const addClient = (ws, username = 'Anonymous') => {
   clients[clientId] = { ws, username, color: generateColor() };
 };
 
+const updateClient = (username, ws) => {
+  clients[ws.clientId].username = username;
+  console.log(clients[ws.clientId]);
+};
+
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === SocketServer.OPEN) {
@@ -46,6 +51,13 @@ wss.on('connection', ws => {
 
   ws.on('message', message => {
     const receivedMsg = JSON.parse(message);
+    switch (receivedMsg.type) {
+      case 'postUsername':
+        updateClient(receivedMsg.username, ws);
+        break;
+      default:
+        console.log('Unkown message type');
+    }
   });
 });
 
