@@ -31,7 +31,11 @@ const addClient = (ws, username = 'Anonymous') => {
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === SocketServer.OPEN) {
-      client.send(data);
+      try {
+        client.send(data);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
     }
   });
 };
